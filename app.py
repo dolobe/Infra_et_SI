@@ -61,7 +61,7 @@ def restore():
     app.logger.info('Tentative de restauration')
 
     # Récupérer le motif à partir du formulaire
-    pattern = request.form['pattern']
+    pattern = re.escape(request.form['pattern'])
     
     # Définir le chemin du répertoire de sauvegarde distant
     remote_backup_dir = "/home/rakotondrasoa/Infra_et_SI/Backup/"
@@ -107,4 +107,5 @@ def restore():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
 

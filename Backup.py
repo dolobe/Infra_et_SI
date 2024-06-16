@@ -34,7 +34,7 @@ LOG_FILE = "file.log"
 
 # Générer le nom de fichier de destination avec la date et l'heure actuelles
 now = datetime.now()
-timestamp = now.strftime("%d-%m-%Y_%H:%M:%S")
+timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
 dest_filename = f"test_{timestamp}.txt"
 dest_path = os.path.join(DEST_DIR, dest_filename)
 
