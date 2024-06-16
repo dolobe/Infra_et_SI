@@ -50,33 +50,35 @@
 # except Exception as e:
 #     log_message(f"Erreur lors de l'ajout de la tâche à crontab : {str(e)}")
 
-import os
+import schedule
+import time
 import subprocess
 from datetime import datetime
 
-# Définir les chemins et paramètres
-SOURCE_DIR = "test.txt"
-DEST_DIR = "rakotondrasoa@192.168.48.131:/home/rakotondrasoa/Infra_et_SI/Backup/"
-LOG_FILE = "file.log"
+# Fonction pour enregistrer les messages de log
+def log_message(message):
+    with open("schedule_log.txt", "a") as log_file:
+        log_file.write(f"{datetime.now()} - {message}\n")
 
-# Générer le nom de fichier de destination avec la date et l'heure actuelles
-now = datetime.now()
-timestamp = now.strftime("%d-%m-%Y_%H%M%S")
-dest_filename = f"test_{timestamp}.txt"
-dest_path = os.path.join(DEST_DIR, dest_filename)
-
-# Test de l'existence du fichier source
-if os.path.isfile(SOURCE_DIR):
-    # Commande scp pour transférer le fichier
+def execute_script():
+    log_message("Starting script execution")
     try:
-        subprocess.run(["scp", SOURCE_DIR, dest_path], check=True)
-        with open(LOG_FILE, "a") as log_file:
-            log_file.write(f"{datetime.now()} - Transfert terminé avec succès. Fichier transféré: {dest_filename}\n")
-    except subprocess.CalledProcessError:
-        with open(LOG_FILE, "a") as log_file:
-            log_file.write(f"{datetime.now()} - Erreur lors du transfert.\n")
-            exit(1)
-else:
-    with open(LOG_FILE, "a") as log_file:
-        log_file.write(f"{datetime.now()} - Le fichier source {SOURCE_DIR} n'existe pas.\n")
-        exit(1)
+        subprocess.run(["python", "Backup.py"], check=True)
+        log_message("Script executed successfully")
+    except subprocess.CalledProcessError as e:
+        log_message(f"Error executing script: {e}")
+
+# Planifier l'exécution du script tous les jours à 12h
+schedule.every().day.at("12:00").do(execute_script)
+log_message("Scheduled daily execution at 12:00")
+
+# Planifier l'exécution du script toutes les heures
+schedule.every().hour.do(execute_script)
+log_message("Scheduled hourly execution")
+
+# Boucle principale pour vérifier les planifications
+while True:
+    log_message("Checking scheduled tasks")
+    schedule.run_pending()
+    time.sleep(60)  # Attendre 60 secondes avant de vérifier à nouveau les planifications
+
