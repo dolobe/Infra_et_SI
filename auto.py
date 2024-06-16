@@ -62,7 +62,10 @@ def execute_script():
         print(f"Error executing script: {e}")
 
 # Planifier l'exécution du script tous les jours à 12h
-schedule.every().day.at("23:49").do(execute_script)
+schedule.every().day.at("12:00").do(execute_script)
+
+# Planifier l'exécution du script toutes les heures
+schedule.every().hour.do(execute_script)
 
 # Boucle principale pour vérifier les planifications
 while True:
