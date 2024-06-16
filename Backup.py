@@ -1,0 +1,24 @@
+import os
+import subprocess
+from datetime import datetime
+
+# Définir les chemins et paramètres
+SOURCE_DIR = "test.txt"
+DEST_DIR = "rakotondrasoa@192.168.48.131:/home/rakotondrasoa/Infra_et_SI/Backup/"
+LOG_FILE = "file.log"
+
+# Test de l'existence du fichier source
+if os.path.isfile(SOURCE_DIR):
+    # Commande scp pour transférer le fichier
+    try:
+        subprocess.run(["scp", SOURCE_DIR, DEST_DIR], check=True)
+        with open(LOG_FILE, "a") as log_file:
+            log_file.write(f"{datetime.now()} - Transfert terminé avec succès.\n")
+    except subprocess.CalledProcessError:
+        with open(LOG_FILE, "a") as log_file:
+            log_file.write(f"{datetime.now()} - Erreur lors du transfert.\n")
+            exit(1)
+else:
+    with open(LOG_FILE, "a") as log_file:
+        log_file.write(f"{datetime.now()} - Le fichier source {SOURCE_DIR} n'existe pas.\n")
+        exit(1)
